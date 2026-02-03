@@ -37,5 +37,19 @@ next-env.d.ts
 .idea
 .vscode
 
+# Vercel
 .vercel
+
+# Windows artifacts
 nul
+
+# Debug/temporary files
+.playwright-mcp/
+
+# Source/reference files (not needed in repo)
+*.docx
+*.pdf
+*.zip
+*.jpeg
+*.jpg
+reference/
