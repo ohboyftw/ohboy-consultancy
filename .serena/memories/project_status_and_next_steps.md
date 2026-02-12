@@ -1,191 +1,94 @@
 # Project Status & Next Steps
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-12
 
-## Critical Fix Applied
+## Current State: Ready for Production Deploy
 
-**PostCSS/Tailwind CSS Configuration Issue (RESOLVED)**
-- **Problem:** Tailwind utility classes not compiling - `@tailwind` directives appearing unchanged in output CSS
-- **Root Cause:** Next.js 14.x not loading ESM PostCSS config (`postcss.config.mjs`)
-- **Solution:** Converted to CommonJS format (`postcss.config.js`)
-- See memory: `tailwind-postcss-nextjs-fix` for details
+### Completed Features
 
-## Current State Summary
+#### Core Website (Single Page)
+- [x] Navbar with scroll progress, mobile sheet menu, "Book" link
+- [x] Hero with typewriter, particles, CTA → `/book`
+- [x] About section with founder story, timeline, values
+- [x] Services section (4 service cards)
+- [x] Portfolio section with project case studies
+- [x] Pricing section (Discovery CTA → `/book`)
+- [x] Contact form (Supabase + email notification)
+- [x] Footer with social links
 
-### Completed Tasks
+#### Booking System (`/book`)
+- [x] 3-step wizard: Date → Time → Details → Confirmation
+- [x] Calendar date picker (react-day-picker v9)
+- [x] Timezone-aware time slot grid (native Intl APIs)
+- [x] Availability API route (`/api/availability`)
+- [x] Supabase tables: availability_rules, bookings, blocked_slots
+- [x] Double-booking prevention (unique constraint)
+- [x] ICS calendar download on confirmation
+- [x] Graceful fallback when Supabase not configured
 
-#### Setup & Structure
-- [x] Next.js 14 project extracted and configured
-- [x] Git repository initialized
-- [x] CLAUDE.md created with project documentation
-- [x] Serena memories created (5 files)
-- [x] ISSUES.md code review tracker (37 issues identified)
-- [x] DESIGN_IMPROVEMENTS.md design backlog (28 items)
+#### Email Notifications
+- [x] Booking confirmation email to client
+- [x] Booking notification email to consultant
+- [x] Contact form notification to consultant
+- [x] Uses nodemailer + GoDaddy SMTP (smtpout.secureserver.net:465)
+- [x] No third-party email SaaS (no Resend/SendGrid)
 
-#### Brand Integration
-- [x] Logo component created (`components/brand/Logo.tsx`)
-- [x] Logo integrated into navbar (animated SVG)
-- [x] Founder portrait added to About section (grayscale with hover effect)
-- [x] Logo images copied to public folder
-- [x] Favicon and OG image metadata configured
+#### SEO
+- [x] Meta tags, OpenGraph, Twitter cards
+- [x] OG image (edge-rendered 1200x630)
+- [x] robots.txt, sitemap.xml (includes /book)
+- [x] JSON-LD structured data (ProfessionalService, 4 Services, Offer)
 
-#### Messaging Updates
-- [x] Hero typewriter: outcome-focused messages
-- [x] About values: Ship Fast, One Expert, Battle-Tested, Lean Solutions
-- [x] "Ohboy Moment" reframed for ROI/efficiency
+#### Infrastructure
+- [x] Supabase project configured
+- [x] Migration SQL ready (contact + booking tables)
+- [x] Seed data: Sun-Thu 9-17, Fri-Sat off
+- [x] Error boundary and custom 404
 
-#### Bug Fixes (7 of 37 complete)
-- [x] ISSUE-001: XSS vulnerability in contact form
-- [x] ISSUE-002: Deprecated next/image config
-- [x] ISSUE-003: Mobile menu aria-label
-- [x] ISSUE-004: Icon link aria-labels
-- [x] ISSUE-009: Error boundary (app/error.tsx)
-- [x] ISSUE-010: OpenGraph image metadata
-- [x] ISSUE-030: Custom 404 page
+### Bug Fixes Applied
+- Timezone bug in availability API (parseISO + setUTCHours → pure string math)
+- date-fns-tz v3/v4 incompatibility (replaced with native Intl APIs, removed dep)
 
-### Project Files Structure
+### Environment Variables Required
 ```
-OhboyConsultancyWebsite/
-├── app/
-│   ├── page.tsx
-│   ├── layout.tsx (updated with metadata)
-│   ├── globals.css
-│   ├── error.tsx (NEW)
-│   └── not-found.tsx (NEW)
-├── components/
-│   ├── brand/
-│   │   └── Logo.tsx (NEW)
-│   ├── ui/ (6 Shadcn components)
-│   ├── magicui/ (4 animation components)
-│   └── sections/ (8 sections, hero & about updated)
-├── public/
-│   └── images/
-│       ├── founder-portrait.jpeg
-│       ├── logo-circuit.png
-│       └── logo-minimal.png
-├── reference/
-│   ├── brand-identity/ (extracted)
-│   ├── BRAND_ASSETS_EVALUATION.md
-│   └── *.png (original logo images)
-├── CLAUDE.md
-├── ISSUES.md (7 fixed, 30 open)
-└── DESIGN_IMPROVEMENTS.md
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SMTP_USER=aravind@ohboyconsultancy.com
+SMTP_PASSWORD=<GoDaddy email password>
 ```
 
 ---
 
 ## Next Steps (Priority Order)
 
-### Immediate (Before Launch)
+### Immediate: Deploy
+1. Vercel deployment — site is build-ready
+2. Domain DNS — point ohboyconsultancy.com to Vercel
+3. Set env vars on Vercel (4 variables)
 
-1. **Fix Cal.com Integration**
-   - Update placeholder `https://cal.com` to actual booking URL
-   - Files: `contact.tsx`, `pricing.tsx`
-   - Consider embedding Cal.com widget directly
+### Short Term
+4. Portfolio real images — replace placeholder letters
+5. Particles O(n²) fix — performance on mobile
 
-2. **Add Form Labels for Accessibility**
-   - Associate labels with inputs in contact form
-   - Use `htmlFor` attribute or wrap inputs in label elements
-   - File: `contact.tsx`
+### Planned (docs/plans/)
+6. Calendar sync system — Google/Microsoft/Apple → Supabase (separate FastAPI service)
 
-3. **Fix Footer Accessibility**
-   - Add aria-labels to footer social links
-   - Use semantic HTML (`<address>`, `<nav>`)
-   - File: `footer.tsx`
-
-### High Priority (Post-Launch Week 1)
-
-4. **Create Proper OG Image**
-   - Design 1200x630 OG image with logo and tagline
-   - Currently using 512x512 logo (not ideal ratio)
-   - Place in `public/images/og-image.png`
-
-5. **Add Testimonials Section**
-   - Placeholder with "Coming Soon" or invitation
-   - Prepare structure for future testimonials
-   - Consider carousel layout
-
-6. **Implement Scroll Spy**
-   - Highlight active section in navbar
-   - Use Intersection Observer
-   - File: `navbar.tsx`
-
-7. **SEO Improvements**
-   - Create `app/sitemap.ts`
-   - Create `app/robots.ts`
-   - Add JSON-LD structured data
-
-### Medium Priority
-
-8. **Performance Optimization**
-   - Review Particles component O(n²) issue
-   - Add proper cleanup to Typewriter effect
-   - Consider lazy loading for sections
-
-9. **Form Validation**
-   - Add proper validation states
-   - Loading state during submission
-   - Success/error feedback
-
-10. **Portfolio Visual Content**
-    - Replace placeholder letters with project images
-    - Create mockups if screenshots unavailable
-
-### Commands to Run
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production (verify no errors)
-npm run build
-
-# Lint code
-npm run lint
-```
+### Deferred
+- Videos/Demos section (needs Remotion content)
+- Testimonials section (needs actual testimonials)
+- Scroll spy in navbar
+- Accessibility audit
 
 ---
 
-## Known Issues Remaining
+## Architecture
 
-### High Priority (4 open)
-- ISSUE-005: Form labels not associated with inputs
-- ISSUE-006: Hardcoded calendar link (generic cal.com)
-- ISSUE-007: Unused variables in navbar (run lint)
-- ISSUE-008: Particles O(n²) performance
+### API Routes
+- `GET /api/availability?date=YYYY-MM-DD` — generates 60-min slots
+- `POST /api/send-confirmation` — booking confirmation emails
+- `POST /api/send-contact` — contact form notification email
 
-### Medium Priority (15 open)
-- Various SEO, accessibility, and code quality improvements
-- See ISSUES.md for full list
-
-### Low Priority (11 open)
-- Polish items, nice-to-haves
-- See ISSUES.md for full list
-
----
-
-## Design Improvements Remaining
-
-### P0 Critical (4 items)
-- DI-001: Project images (using placeholders)
-- DI-002: ~~Founder photo~~ DONE
-- DI-003: Cal.com widget integration
-- DI-004: Videos/Demos section
-
-### P1 High (8 items)
-- Testimonials section, scroll spy, mobile nav polish, WhatsApp button, etc.
-
-See DESIGN_IMPROVEMENTS.md for full list.
-
----
-
-## Notes for Future Sessions
-
-- Brand assets evaluated in `reference/BRAND_ASSETS_EVALUATION.md`
-- Logo variants available: circuit-detailed and minimal
-- Color palette: Emerald (#10B981), Cyan accent (#22D3EE), Deep Slate (#020617)
-- Typography: Plus Jakarta Sans (body), Space Grotesk (display), JetBrains Mono (code)
-- Outcome-focused messaging: Speed, Cost, Risk, Simplicity
+### Key Decisions
+- No third-party SaaS — self-hosted SMTP via GoDaddy
+- Timezone handling — pure string math in API, native Intl on frontend
+- Graceful degradation — works without Supabase

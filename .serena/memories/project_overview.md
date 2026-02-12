@@ -29,12 +29,17 @@ public/                # Static assets
 ```
 
 ## Key Sections
-1. **Hero** - Animated headline, typewriter, trust badges
+1. **Hero** - Animated headline, typewriter, trust badges, CTA → /book
 2. **About** - Founder story, timeline, value propositions
 3. **Services** - 4 service cards (Architecture, AI/ML, Full-Stack, Embedded)
 4. **Portfolio** - Project case studies with tech badges
-5. **Pricing** - 4 packages (Discovery FREE, Architecture Sprint, Embedded Partner, Project Build)
-6. **Contact** - Cal.com booking integration, contact methods
+5. **Pricing** - 4 packages (Discovery CTA → /book, others → #contact)
+6. **Contact** - Form with Supabase + email notification, WhatsApp link
+7. **Book** (`/book`) - 3-step booking wizard with calendar, time slots, confirmation
+
+## Email System
+- Nodemailer + GoDaddy SMTP (smtpout.secureserver.net:465)
+- No third-party email services
 
 ## Design Theme
 - **Dark theme** by default (slate-950 background)

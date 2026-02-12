@@ -16,7 +16,7 @@ import { DatePicker } from "@/components/booking/date-picker";
 import { TimeSlotGrid } from "@/components/booking/time-slot-grid";
 import { BookingForm } from "@/components/booking/booking-form";
 import { ConfirmationScreen } from "@/components/booking/confirmation-screen";
-import { getUserTimezone, formatBookingDate } from "@/lib/booking-utils";
+import { getUserTimezone, formatBookingDate, utcToLocal } from "@/lib/booking-utils";
 import { getSupabaseClient } from "@/lib/supabase";
 import type {
   BookingStep,
@@ -99,6 +99,17 @@ export function BookingFlow() {
       }
 
       setConfirmedBooking(data as Booking);
+
+      // Send confirmation email (fire-and-forget)
+      fetch("/api/send-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...bookingData,
+          start_time: utcToLocal(dateStr, startTime, timezone),
+          end_time: utcToLocal(dateStr, endTime, timezone),
+        }),
+      }).catch(() => {});
     } else {
       // Fallback: create a local booking object when Supabase isn't configured
       setConfirmedBooking({

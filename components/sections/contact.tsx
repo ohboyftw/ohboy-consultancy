@@ -86,6 +86,13 @@ export function Contact() {
       return;
     }
 
+    // Send email notification (fire-and-forget)
+    fetch("/api/send-contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formState),
+    }).catch(() => {});
+
     setStatus("success");
     setFormState({ name: "", email: "", message: "" });
   };
