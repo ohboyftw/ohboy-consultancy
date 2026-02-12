@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, useScroll } from "framer-motion";
-import { Menu, Github, Calendar, ArrowRight } from "lucide-react";
+import { Menu, Github, MessageSquare, CalendarDays, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ const navLinks = [
   { name: "Work", href: "#portfolio" },
   { name: "Pricing", href: "#pricing" },
   { name: "Contact", href: "#contact" },
+  { name: "Book", href: "/book" },
 ];
 
 export function Navbar() {
@@ -92,9 +93,9 @@ export function Navbar() {
               <Github size={20} />
             </Link>
             <Button variant="gradient" size="default" asChild>
-              <Link href="#contact" className="flex items-center gap-2">
-                <Calendar size={16} />
-                Book a Call
+              <Link href="/book" className="flex items-center gap-2">
+                <CalendarDays size={16} />
+                Book a Session
               </Link>
             </Button>
           </div>
@@ -133,9 +134,9 @@ export function Navbar() {
                       className="w-full"
                       asChild
                     >
-                      <Link href="#contact" className="flex items-center gap-2">
-                        <Calendar size={20} />
-                        Book Discovery Call — Free
+                      <Link href="/book" className="flex items-center gap-2">
+                        <CalendarDays size={20} />
+                        Book a Session
                       </Link>
                     </Button>
                   </SheetClose>

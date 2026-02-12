@@ -156,6 +156,7 @@ export function About() {
                           src="/images/founder-portrait.jpeg"
                           alt="Aravind Vijayakumar - Principal Consultant"
                           fill
+                          sizes="(max-width: 768px) 80px, 96px"
                           className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         />
                         <div className="absolute inset-0 bg-emerald-500/10 group-hover:bg-transparent transition-all" />

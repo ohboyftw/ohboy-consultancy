@@ -41,16 +41,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Aravind Vijayakumar" }],
   creator: "Ohboy Consultancy FZ LLC",
-  icons: {
-    icon: [
-      { url: "/images/logo-minimal.png", sizes: "32x32", type: "image/png" },
-      { url: "/images/logo-minimal.png", sizes: "16x16", type: "image/png" },
-    ],
-    apple: [
-      { url: "/images/logo-circuit.png", sizes: "180x180", type: "image/png" },
-    ],
-    shortcut: "/images/logo-minimal.png",
-  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -59,21 +49,12 @@ export const metadata: Metadata = {
     title: "Ohboy Consultancy | Bridging Hardware, Software, and AI",
     description:
       "One senior engineer delivering what typically requires 3 specialists. Ship in weeks, not months. Battle-tested at Olympic scale.",
-    images: [
-      {
-        url: "/images/logo-circuit.png",
-        width: 512,
-        height: 512,
-        alt: "Ohboy Consultancy Logo",
-      },
-    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Ohboy Consultancy | Bridging Hardware, Software, and AI",
     description:
       "One senior engineer delivering what typically requires 3 specialists. Ship in weeks, not months.",
-    images: ["/images/logo-circuit.png"],
   },
   robots: {
     index: true,

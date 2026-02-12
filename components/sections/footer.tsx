@@ -37,19 +37,19 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           {/* Logo & Copyright */}
           <div className="flex flex-col items-center md:items-start gap-2">
-            <Link href="#" className="flex items-center gap-2">
+            <Link href="#" aria-label="Ohboy Consultancy home" className="flex items-center gap-2">
               <Terminal size={18} className="text-emerald-500" />
               <span className="font-mono font-bold">
                 OHBOY<span className="text-emerald-500">_</span>
               </span>
             </Link>
-            <p className="text-sm text-slate-500 font-mono">
+            <address className="text-sm text-slate-500 font-mono not-italic">
               © {currentYear} Ohboy Consultancy FZ LLC
-            </p>
+            </address>
           </div>
 
           {/* Links */}
-          <div className="flex items-center gap-6 text-sm text-slate-500">
+          <nav aria-label="Footer" className="flex items-center gap-6 text-sm text-slate-500">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -59,7 +59,7 @@ export function Footer() {
                 {link.name}
               </Link>
             ))}
-          </div>
+          </nav>
 
           {/* Social */}
           <div className="flex items-center gap-4">
@@ -73,6 +73,7 @@ export function Footer() {
                     ? "noopener noreferrer"
                     : undefined
                 }
+                aria-label={link.name}
                 className="w-10 h-10 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-emerald-500/30 transition-all"
               >
                 <link.icon size={18} />

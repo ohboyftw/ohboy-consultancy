@@ -22,8 +22,8 @@ const packages = [
       "Technology recommendations",
       "No commitment required",
     ],
-    cta: "Book Discovery Call",
-    ctaLink: "#contact",
+    cta: "Book Free Session",
+    ctaLink: "/book",
     featured: true,
   },
   {

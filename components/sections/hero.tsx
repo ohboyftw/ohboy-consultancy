@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, ArrowRight, ChevronDown } from "lucide-react";
+import { CalendarDays, ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/magicui/blur-fade";
@@ -86,12 +86,9 @@ export function Hero() {
           <BlurFade delay={0.4}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Button variant="gradient" size="xl" asChild>
-                <Link href="#contact" className="flex items-center gap-3">
-                  <Calendar size={20} />
-                  Book Discovery Call
-                  <span className="text-emerald-200 text-sm font-normal">
-                    — Free
-                  </span>
+                <Link href="/book" className="flex items-center gap-3">
+                  <CalendarDays size={20} />
+                  Book a Free Session
                 </Link>
               </Button>
 
