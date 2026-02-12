@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseClient } from "@/lib/supabase";
-import { format, parseISO, addMinutes } from "date-fns";
 
 const SLOT_DURATION_MINUTES = 60;
 
-// Default availability when Supabase is not configured (Sun-Thu 9-17 Dubai time)
+// Default availability when Supabase is not configured (Sun-Thu 9-17)
 const DEFAULT_RULES: Record<number, { start: string; end: string } | null> = {
   0: { start: "09:00", end: "17:00" }, // Sunday
   1: { start: "09:00", end: "17:00" }, // Monday
@@ -14,6 +13,26 @@ const DEFAULT_RULES: Record<number, { start: string; end: string } | null> = {
   5: null, // Friday (off)
   6: null, // Saturday (off)
 };
+
+/** Parse "HH:MM" to minutes since midnight */
+function toMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+/** Convert minutes since midnight to "HH:MM" */
+function fromMinutes(mins: number): string {
+  const h = Math.floor(mins / 60).toString().padStart(2, "0");
+  const m = (mins % 60).toString().padStart(2, "0");
+  return `${h}:${m}`;
+}
+
+/** Get day of week from YYYY-MM-DD string without timezone issues */
+function getDayOfWeek(dateStr: string): number {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  // Use UTC to avoid timezone shifting the date
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -26,8 +45,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const date = parseISO(dateStr);
-  const dayOfWeek = date.getDay();
+  const dayOfWeek = getDayOfWeek(dateStr);
 
   const supabase = getSupabaseClient();
 
@@ -39,7 +57,6 @@ export async function GET(request: NextRequest) {
   }[] = [];
 
   if (supabase) {
-    // Fetch availability rules for this day of week
     const { data: rulesData } = await supabase
       .from("availability_rules")
       .select("start_time, end_time")
@@ -51,7 +68,6 @@ export async function GET(request: NextRequest) {
       end_time: r.end_time.slice(0, 5),
     }));
 
-    // Fetch existing bookings for this date
     const { data: bookingsData } = await supabase
       .from("bookings")
       .select("start_time, end_time")
@@ -63,7 +79,6 @@ export async function GET(request: NextRequest) {
       end_time: b.end_time.slice(0, 5),
     }));
 
-    // Fetch blocked slots for this date
     const { data: blockedData } = await supabase
       .from("blocked_slots")
       .select("start_time, end_time")
@@ -74,60 +89,51 @@ export async function GET(request: NextRequest) {
       end_time: b.end_time?.slice(0, 5) ?? null,
     }));
   } else {
-    // Use default rules when Supabase is not configured
     const defaultRule = DEFAULT_RULES[dayOfWeek];
     if (defaultRule) {
       rules = [{ start_time: defaultRule.start, end_time: defaultRule.end }];
     }
   }
 
-  // No rules = day is off
   if (rules.length === 0) {
     return NextResponse.json({ slots: [], date: dateStr });
   }
 
-  // Generate time slots
+  // Generate time slots using pure string/number math — no Date timezone issues
   const slots: { start: string; end: string; available: boolean }[] = [];
 
+  // Current time as UTC ISO for past-check
+  const nowUTC = new Date().toISOString();
+
   for (const rule of rules) {
-    const [startH, startM] = rule.start_time.split(":").map(Number);
-    const [endH, endM] = rule.end_time.split(":").map(Number);
+    let currentMins = toMinutes(rule.start_time);
+    const endMins = toMinutes(rule.end_time);
 
-    let current = new Date(date);
-    current.setUTCHours(startH, startM, 0, 0);
+    while (currentMins + SLOT_DURATION_MINUTES <= endMins) {
+      const slotStartStr = fromMinutes(currentMins);
+      const slotEndStr = fromMinutes(currentMins + SLOT_DURATION_MINUTES);
 
-    const endTime = new Date(date);
-    endTime.setUTCHours(endH, endM, 0, 0);
+      const slotStartISO = `${dateStr}T${slotStartStr}:00Z`;
+      const slotEndISO = `${dateStr}T${slotEndStr}:00Z`;
 
-    while (current < endTime) {
-      const slotEnd = addMinutes(current, SLOT_DURATION_MINUTES);
-      if (slotEnd > endTime) break;
-
-      const slotStartStr = format(current, "HH:mm");
-      const slotEndStr = format(slotEnd, "HH:mm");
-
-      // Check if slot is booked
       const isBooked = bookedSlots.some(
         (b) => b.start_time === slotStartStr
       );
 
-      // Check if slot is blocked
       const isBlocked = blockedSlots.some((b) => {
         if (!b.start_time) return true; // full day block
         return b.start_time <= slotStartStr && b.end_time! >= slotEndStr;
       });
 
-      // Check if slot is in the past
-      const now = new Date();
-      const isPast = current < now;
+      const isPast = slotStartISO < nowUTC;
 
       slots.push({
-        start: `${dateStr}T${slotStartStr}:00Z`,
-        end: `${dateStr}T${slotEndStr}:00Z`,
+        start: slotStartISO,
+        end: slotEndISO,
         available: !isBooked && !isBlocked && !isPast,
       });
 
-      current = slotEnd;
+      currentMins += SLOT_DURATION_MINUTES;
     }
   }
 
