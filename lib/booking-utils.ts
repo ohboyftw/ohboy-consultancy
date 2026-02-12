@@ -1,31 +1,16 @@
-import { format, parseISO } from "date-fns";
-import { toZonedTime, fromZonedTime } from "date-fns-tz";
 import type { Booking } from "@/types/booking";
 
 /**
- * Convert a UTC time string to the user's local timezone for display.
+ * Format a UTC ISO time string to the user's local timezone for display.
+ * e.g. "2026-02-15", "09:00" -> "1:00 PM" (in Asia/Dubai)
  */
-export function utcToLocal(
-  date: string,
-  time: string,
-  timezone: string
-): string {
-  const utcDate = parseISO(`${date}T${time}:00Z`);
-  const zonedDate = toZonedTime(utcDate, timezone);
-  return format(zonedDate, "h:mm a");
-}
-
-/**
- * Convert a local time to UTC for storage.
- */
-export function localToUtc(
-  date: string,
-  time: string,
-  timezone: string
-): string {
-  const localDate = parseISO(`${date}T${time}:00`);
-  const utcDate = fromZonedTime(localDate, timezone);
-  return format(utcDate, "HH:mm");
+export function utcToLocal(date: string, time: string, timezone: string): string {
+  const utcDate = new Date(`${date}T${time}:00Z`);
+  return utcDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: timezone,
+  });
 }
 
 /**
@@ -36,10 +21,20 @@ export function getUserTimezone(): string {
 }
 
 /**
- * Format a date for display.
+ * Format a date string for display.
+ * e.g. "2026-02-15" -> "Sunday, February 15, 2026"
  */
 export function formatBookingDate(dateStr: string): string {
-  return format(parseISO(dateStr), "EEEE, MMMM d, yyyy");
+  // Parse as UTC to avoid date shifting
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 /**

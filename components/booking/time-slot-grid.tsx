@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format, parseISO } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { format } from "date-fns";
 import { Clock, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlurFade } from "@/components/magicui/blur-fade";
@@ -13,6 +12,15 @@ interface TimeSlotGridProps {
   date: Date;
   selectedSlot: TimeSlot | null;
   onSelectSlot: (slot: TimeSlot) => void;
+}
+
+function formatSlotTime(isoString: string, timezone: string): string {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: timezone,
+  });
 }
 
 export function TimeSlotGrid({
@@ -38,17 +46,13 @@ export function TimeSlotGrid({
         const data = await res.json();
 
         const mapped: TimeSlot[] = data.slots.map(
-          (s: { start: string; end: string; available: boolean }) => {
-            const startZoned = toZonedTime(parseISO(s.start), timezone);
-            const endZoned = toZonedTime(parseISO(s.end), timezone);
-            return {
-              start: s.start,
-              end: s.end,
-              startLocal: format(startZoned, "h:mm a"),
-              endLocal: format(endZoned, "h:mm a"),
-              available: s.available,
-            };
-          }
+          (s: { start: string; end: string; available: boolean }) => ({
+            start: s.start,
+            end: s.end,
+            startLocal: formatSlotTime(s.start, timezone),
+            endLocal: formatSlotTime(s.end, timezone),
+            available: s.available,
+          })
         );
 
         setSlots(mapped);
@@ -113,7 +117,7 @@ export function TimeSlotGrid({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {availableSlots.map((slot, i) => {
+          {availableSlots.map((slot) => {
             const isSelected = selectedSlot?.start === slot.start;
             return (
               <Button
