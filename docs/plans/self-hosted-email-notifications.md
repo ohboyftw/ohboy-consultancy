@@ -1,3 +1,15 @@
+---
+title: "Self-Hosted Email Notifications"
+status: active
+owner: aravind
+last_verified: "2026-02-12"
+created: "2026-02-12"
+tags: [email, smtp, nodemailer, notifications]
+cross_links:
+  - docs/plans/calendar-sync-system.md
+  - docs/design-docs/email-system.md
+---
+
 # Self-Hosted Email Notifications — Project Plan
 
 ## Status: PLANNED (not started)

@@ -1,3 +1,14 @@
+---
+title: "Calendar Sync System"
+status: draft
+owner: aravind
+last_verified: "2026-02-12"
+created: "2026-02-12"
+tags: [calendar, google, microsoft, apple, sync, booking]
+cross_links:
+  - docs/plans/self-hosted-email-notifications.md
+---
+
 # Calendar Sync System — Project Plan
 
 ## Status: PLANNED (not started)

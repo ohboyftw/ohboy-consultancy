@@ -46,6 +46,20 @@ nul
 # Debug/temporary files
 .playwright-mcp/
 
+# Serena search index (local state)
+.serena/bm25_index.json
+.serena/semantic/
+.serena/index_meta.json
+
+# Claude Code local state
+.claude/
+
+# Engram memory (local state)
+.engram/
+
+# Screenshots (not needed in repo)
+*.png
+
 # Source/reference files (not needed in repo)
 *.docx
 *.pdf
